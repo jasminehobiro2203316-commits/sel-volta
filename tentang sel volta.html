@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang Sel Volta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2c3e50;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header Navigation */
+        .header-nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+            color: #764ba2;
+        }
+
+        .page-title-header {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease-out 0.2s both;
+        }
+
+        .scroll-instruction {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.1em;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out 0.3s both;
+        }
+
+        .scroll-instruction span {
+            display: inline-block;
+            animation: slideRight 2s infinite;
+            margin: 0 5px;
+        }
+
+        @keyframes slideRight {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-bottom: 40px;
+            /* biarkan halaman panjang normal (hapus pembatasan tinggi dan scroll internal) */
+            /* max-height: calc(100vh - 320px); */
+            /* overflow-y: auto; */
+            padding-right: 0;
+            scroll-behavior: smooth;
+        }
+
+        /* hapus/komentar aturan scrollbar internal jika ada:
+        .content-grid::-webkit-scrollbar { ... }
+        .content-grid::-webkit-scrollbar-track { ... }
+        .content-grid::-webkit-scrollbar-thumb { ... }
+        */
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+            transition: all 0.25s ease;
+            animation: fadeInUp 0.6s ease-out;
+            width: 100%;
+            max-width: none;
+            min-height: 160px;        /* bentuk persegi panjang mendatar */
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card h3 {
+            color: #667eea;
+            font-size: 1.2em;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card .card-icon {
+            font-size: 2.4em;
+            width: 72px;
+            height: 72px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background: linear-gradient(135deg,#eef6ff,#e6e0ff);
+            border-radius:12px;
+            flex-shrink:0;
+        }
+
+        .card p, .card ul {
+            margin:0;
+            color:#4b5563;
+        }
+
+        /* Button Styles */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Kegunaan Grid: 4 kolom di layar lebar, 3 di layar medium, 2 di kecil, 1 di sangat kecil */
+        .kegunaan-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .kegunaan-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .kegunaan-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 520px) {
+            .kegunaan-grid { grid-template-columns: 1fr; }
+        }
+
+        .kegunaan-item {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .kegunaan-item:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .kegunaan-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .kegunaan-item h4 {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .kegunaan-item p {
+            font-size: 0.9em;
+            color: inherit;
+        }
+
+        /* Challenge Input */
+        .challenge-input {
+            width: 100%;
+            min-height: 90px;
+            max-width: 100%;
+            padding: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1.05em;
+            font-family: inherit;
+            margin-top: 15px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .challenge-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 700px;
+            width: 90%;
+            position: relative;
+            animation: slideDown 0.3s;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 25px;
+            top: 25px;
+            font-size: 2em;
+            cursor: pointer;
+            color: #999;
+            transition: all 0.3s;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            color: #333;
+            background: #f0f0f0;
+        }
+
+        .reaction-formula {
+            background: #f8f9fa;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            border-radius: 8px;
+        }
+
+        .formula-label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box strong {
+            color: #1976d2;
+        }
+
+        /* Navigation Button */
+        .nav-button-container {
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .nav-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 18px 45px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2em;
+            }
+
+            .section-subtitle {
+                font-size: 1.1em;
+            }
+
+            .card {
+                flex-direction: column;
+                align-items:flex-start;
+                min-height: auto;
+                padding: 18px;
+            }
+
+            .card .card-icon {
+                width:48px;
+                height:48px;
+                font-size:1.6em;
+            }
+
+            .kegunaan-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-content {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <nav class="header-nav">
+        <div class="header-content">
+            <a href="index.html" class="back-link">
+                <span>←</span>
+                <span>Kembali ke Beranda</span>
+            </a>
+            <h2 class="page-title-header">Tentang Sel Volta</h2>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Section Title -->
+        <h1 class="section-title">Tentang Sel Volta</h1>
+        <p class="section-subtitle">Memahami Konsep Dasar Elektrokimia dan Konversi Energi</p>
+        </p>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Card 1: Pengertian Lengkap -->
+            <div class="card">
+                <h3>
+                    <span class="card-icon">⚡</span>
+                    Pengertian Sel Volta
+                </h3>
+                <p><strong>Sel Volta</strong> atau <strong>Sel Galvani</strong> adalah suatu perangkat elektrokimia yang mengubah energi kimia menjadi energi listrik melalui reaksi redoks (reduksi-oksidasi) spontan.</p>
+                <p>Sel ini dinamai dari dua ilmuwan:</p>
+                <ul>
+                    <li><strong>Luigi Galvani</strong> - Menemukan fenomena "bioelektrisitas" pada tahun 1780</li>
+                    <li><strong>Alessandro Volta</strong> - Menciptakan sel volta pertama (Voltaic Pile) pada tahun 1800</li>
+                </ul>
+                <div class="info-box">
+                    <strong>Prinsip Dasar:</strong> Dalam sel volta, reaksi kimia spontan menghasilkan aliran elektron yang dapat dimanfaatkan sebagai arus listrik.
+                </div>
+            </div>
+
+            <!-- Card 2: Contoh Reaksi -->
+            <div class="card">
+                <h3>
+                    <span class="card-icon">🔄</span>
+                    Contoh Reaksi Redoks
+                </h3>
+                <p>Sel volta paling umum menggunakan pasangan <strong>Zn-Cu (Sel Daniell)</strong>:</p>
+                <div style="background: #f0f0f0; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                    <p style="text-align: center; font-weight: 600; color: #667eea;">Notasi Sel:</p>
+                    <p style="text-align: center; font-family: 'Courier New', monospace; font-size: 1.1em;">Zn(s) | Zn²⁺(aq) || Cu²⁺(aq) | Cu(s)</p>
+                </div>
+                <button class="btn" onclick="openReactionModal()">📖 Lihat Reaksi Lengkap</button>
+                
+                <div class="info-box" style="margin-top: 15px;">
+                    <strong>Potensial Sel (E°sel):</strong> +1,10 Volt<br>
+                    Artinya sel ini dapat menghasilkan tegangan 1,10 volt pada kondisi standar.
+                </div>
+            </div>
+
+            <!-- Card 3: Kegunaan dalam Kehidupan -->
+            <div class="card" style="grid-column: span 1;">
+                <h3>
+                    <span class="card-icon">🔋</span>
+                    Kegunaan dalam Kehidupan
+                </h3>
+                <p>Prinsip sel volta diaplikasikan dalam berbagai teknologi modern yang kita gunakan sehari-hari:</p>
+                
+                <!-- SINGLE GRID: pertama 4 item akan berada di baris pertama, sisanya otomatis di bawah -->
+                <div class="kegunaan-grid">
+                    <div class="kegunaan-item">
+                        <span class="kegunaan-icon">🔋</span>
+                        <h4>Baterai</h4>
+                        <p>Ponsel, kamera</p>
+                    </div>
+                    <div class="kegunaan-item">
+                        <span class="kegunaan-icon">🚗</span>
+                        <h4>Mobil Listrik</h4>
+                        <p>Baterai lithium‑ion</p>
+                    </div>
+                    <div class="kegunaan-item">
+                        <span class="kegunaan-icon">💻</span>
+                        <h4>Laptop</h4>
+                        <p>Baterai isi ulang</p>
+                    </div>
+                    <div class="kegunaan-item">
+                        <span class="kegunaan-icon">🔦</span>
+                        <h4>Senter</h4>
+                        <p>Baterai portabel</p>
+                    </div>
+
+                    <!-- items berikut diletakkan otomatis di baris kedua -->
+                    <div class="kegunaan-item">
+                        <span class="kegunaan-icon">🏥</span>
+                        <h4>Alat Medis</h4>
+                        <p>Pompa infus, monitor</p>
+                    </div>
+                    <div class="kegunaan-item">
+                        <span class="kegunaan-icon">🔬</span>
+                        <h4>Sensor & Instrumen</h4>
+                        <p>Sensor gas, pH meter</p>
+                    </div>
+                    <div class="kegunaan-item">
+                        <span class="kegunaan-icon">⚡</span>
+                        <h4>Penyimpanan Energi</h4>
+                        <p>Grid & UPS</p>
+                    </div>
+                    <div class="kegunaan-item">
+                        <span class="kegunaan-icon">🏠</span>
+                        <h4>Alat Rumah Tangga</h4>
+                        <p>Remote, mainan, alat portabel</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Tantangan -->
+            <div class="card" style="grid-column: span 1;">
+                <h3>
+                    <span class="card-icon">💡</span>
+                    Tantangan Pemecahan Masalah
+                </h3>
+                <div style="background: #fff3cd; padding: 15px; border-radius: 10px; border-left: 4px solid #ffc107; margin-bottom: 15px;">
+                    <strong>🎯 Soal:</strong>
+                    <p style="margin-top: 10px;">Seorang siswa mencoba membuat sel Volta sederhana dengan menggunakan dua logam, yaitu seng (Zn) dan tembaga (Cu).
+Ia mencelupkan logam Zn ke dalam larutan ZnSO₄, dan logam Cu ke dalam larutan CuSO₄. Kedua larutan dihubungkan dengan jembatan garam, lalu kedua logam dihubungkan menggunakan kabel dan lampu kecil.</p>
+                </div>
+                <p><strong>Petunjuk:</strong> Jawablah soal dengan benar</p>
+                <ul>
+                    <li>Tuliskan reaksi yang terjadi pada anoda dan katoda.</li>
+                    <li>Tentukan reaksi total sel</li>
+                    <li>Berdasarkan susunan logam tersebut, apakah reaksi yang terjadi bersifat spontan atau tidak? Jelaskan alasannya secara singkat.</li>
+                </ul>
+                <textarea id="challengeAnswer" class="challenge-input" placeholder="Tuliskan jawaban Anda "></textarea>
+                <button class="btn" onclick="submitChallenge()" style="margin-top: 15px;">✅ Submit Jawaban</button>
+            </div>
+        </div>
+
+        <!-- Navigation to Next Section -->
+        <div class="nav-button-container">
+            <a href="kerangka.html" class="nav-button">
+                Lanjut ke Kerangka Sel Volta →
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal untuk Reaksi -->
+    <div id="reactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeReactionModal()">✕</span>
+            <h2 style="color: #667eea; margin-bottom: 25px;">Reaksi Lengkap Sel Volta (Zn-Cu)</h2>
+            
+            <div class="reaction-formula">
+                <div class="formula-label">⚗️ Reaksi di Anoda (Oksidasi):</div>
+                <p>Zn(s) → Zn²⁺(aq) + 2e⁻</p>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">Logam seng melepaskan 2 elektron dan berubah menjadi ion Zn²⁺</p>
+            </div>
+
+            <div class="reaction-formula">
+                <div class="formula-label">⚗️ Reaksi di Katoda (Reduksi):</div>
+                <p>Cu²⁺(aq) + 2e⁻ → Cu(s)</p>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">Ion tembaga menerima 2 elektron dan mengendap sebagai logam Cu</p>
+            </div>
+
+            <div class="reaction-formula" style="background: #e8f5e9; border-left-color: #4caf50;">
+                <div class="formula-label" style="color: #4caf50;">⚡ Reaksi Total (Sel):</div>
+                <p>Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)</p>
+            </div>
+
+            <div class="reaction-formula">
+                <div class="formula-label">📝 Notasi Sel:</div>
+                <p>Zn(s) | Zn²⁺(aq) || Cu²⁺(aq) | Cu(s)</p>
+                <p style="font-size: 0.9em; color: #666; margin-top: 8px;">
+                    • Garis tunggal (|) = batas fase<br>
+                    • Garis ganda (||) = jembatan garam<br>
+                    • Anoda di kiri, Katoda di kanan
+                </p>
+            </div>
+
+            <div class="info-box">
+                <strong>🔋 Potensial Sel Standar (E°sel):</strong><br>
+                E°sel = E°katoda - E°anoda<br>
+                E°sel = (+0,34 V) - (-0,76 V) = +1,10 V
+            </div>
+
+            <p style="margin-top: 20px; color: #666;">
+                <strong>Catatan:</strong> Reaksi ini berlangsung spontan karena E°sel positif, menghasilkan energi listrik yang dapat dimanfaatkan.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        function openReactionModal() {
+            const modal = document.getElementById('reactionModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeReactionModal() {
+            const modal = document.getElementById('reactionModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('reactionModal');
+            if (e.target === modal) {
+                closeReactionModal();
+            }
+        });
+
+        // Close modal with Escape key
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeReactionModal();
+            }
+        });
+
+        // Challenge Answer Submission
+        function submitChallenge() {
+            const answer = document.getElementById('challengeAnswer').value.trim();
+            
+            if (!answer) {
+                alert('⚠️ Mohon tuliskan jawaban Anda terlebih dahulu!');
+                return;
+            }
+
+            if (answer.length < 50) {
+                alert('💭 Jawaban Anda terlalu singkat. Coba jelaskan lebih detail (minimal 50 karakter).');
+                return;
+            }
+
+            // Simulate successful submission
+            alert('✅ Terima kasih!\n\nJawaban Anda telah tercatat.\n\n💡 Tips: Jawaban yang baik mencakup:\n- Penggunaan logam dengan potensial reduksi tinggi\n- Meningkatkan konsentrasi elektrolit\n- Memperluas luas permukaan elektroda\n- Menjaga suhu optimal\n- Menggunakan material yang lebih efisien');
+            
+            document.getElementById('challengeAnswer').value = '';
+        }
+
+        // Smooth scroll animation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add entrance animation on page load
+        window.addEventListener('load', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // Kegunaan item hover effect with sound (optional)
+        const kegunaanItems = document.querySelectorAll('.kegunaan-item');
+        kegunaanItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+            });
+        });
+    </script>
+</body>
+</html>

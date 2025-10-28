@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menjelajahi Sel Galvani Secara Interaktif</title>
+    <!-- Tambah Google Fonts untuk tampilan lebih "aesthetic" -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Nunito:wght@700&family=Rubik:wght@700&family=Open+Sans:wght@400;600&family=Inter:wght@400;600&family=Lato:wght@400;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* SYSTEM GENERATED CSS - DO NOT MODIFY */
+        :root{
+            /* Night / Day palettes */
+            /* updated: deeper blue -> bluish-purple gradient for dark mode */
+            --bg-dark: linear-gradient(120deg, #02102b 0%, #0a2a5a 45%, #3b2a85 100%);
+            --bg-light: linear-gradient(135deg, #f6e9ff 0%, #d9b8ff 50%, #8a63ff 100%);
+            --text-dark: #dbeafe;
+            --text-light: #07263a;
+            --feature-bg-dark: rgba(255,255,255,0.06);
+            --feature-bg-light: rgba(2,48,71,0.06);
+            --panel-bg: #ffffff;
+
+            /* glow colours (used by battery glow) */
+            --glow-dark: rgba(125,210,255,0.18);
+            --glow-light: rgba(179,143,255,0.18);
+            --glow-color: var(--glow-dark);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background .25s ease, color .25s ease;
+        }
+
+        /* Light mode overrides */
+        body.light {
+            background: var(--bg-light);
+            color: var(--text-light);
+
+            /* override glow for light mode */
+            --glow-color: var(--glow-light);
+        }
+
+        /* Light-mode battery styling (sesuaikan dengan gradasi siang) */
+        body.light .battery-body {
+            background: linear-gradient(135deg, #d6f4ff 0%, #e9ffea 55%, #fff7b8 100%);
+            box-shadow: 0 10px 30px rgba(4,78,105,0.06), inset 0 2px 10px rgba(255,255,255,0.6);
+            border: 1px solid rgba(4,78,105,0.06);
+        }
+
+        /* HERO SECTION - LANDING PAGE */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background particles */
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(192, 192, 45, 0.6);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+            will-change: transform, opacity;
+        }
+
+        body.light .particle {
+            background: rgba(200, 209, 37, 0.25);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            5% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Battery Icon - 3D Style */
+        .battery-icon {
+            width: 280px;
+            height: 280px;
+            position: relative;
+            margin-bottom: 40px;
+            animation: fadeInScale 1s ease-out;
+            will-change: transform;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .battery-body {
+            width: 220px;
+            height: 280px;
+            background: linear-gradient(135deg, #8b9dc3 0%, #667eea 50%, #5a67d8 100%);
+            border-radius: 35px;
+            position: relative;
+            margin: 0 auto;
+            /* updated soft shadow + colored ambient glow */
+            box-shadow:
+                0 30px 80px rgba(6,10,30,0.55),
+                0 8px 30px rgba(59,42,86,0.14),
+                inset 0 2px 20px rgba(255,255,255,0.18),
+                inset 0 -2px 20px rgba(0,0,0,0.12);
+            border: 4px solid rgba(255, 255, 255, 0.18);
+            transition: filter .25s ease, box-shadow .25s ease, transform .25s ease;
+        }
+
+        body.light .battery-body {
+            background: linear-gradient(135deg, #eaddeb 0%, #e6b5d4 55%, #d6a2bc 100%);
+            box-shadow:
+                0 22px 60px rgba(7,28,48,0.08),
+                0 6px 20px rgba(138,99,255,0.06),
+                inset 0 2px 10px rgba(255,255,255,0.6);
+            border: 1px solid rgba(4,78,105,0.06);
+        }
+
+        .battery-terminal {
+            width: 80px;
+            height: 25px;
+            background: linear-gradient(135deg, #a8b5d1 0%, #8b9dc3 100%);
+            border-radius: 10px 10px 0 0;
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow:
+                0 -5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 2px 5px rgba(255, 255, 255, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-bottom: none;
+        }
+
+        .battery-level {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 75%;
+            background: linear-gradient(180deg,
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(255, 255, 255, 0.7) 50%,
+                rgba(255, 255, 255, 0.5) 100%);
+            border-radius: 0 0 30px 30px;
+            animation: fillBattery 2s ease-out;
+            box-shadow: inset 0 5px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        @keyframes fillBattery {
+            from {
+                height: 0%;
+            }
+            to {
+                height: 75%;
+            }
+        }
+
+        .battery-shine {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 120px;
+            background: linear-gradient(135deg,
+                rgba(245, 241, 241, 0.4) 0%,
+                rgba(169, 11, 11, 0) 100%);
+            border-radius: 20px;
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        /* Energy waves */
+        .energy-wave {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: waveExpand 3s infinite;
+            pointer-events: none;
+        }
+
+        .energy-wave:nth-child(2) {
+            animation-delay: 1s;
+        }
+
+        .energy-wave:nth-child(3) {
+            animation-delay: 2s;
+        }
+
+        @keyframes waveExpand {
+            0% {
+                width: 280px;
+                height: 280px;
+                opacity: 0.6;
+            }
+            100% {
+                width: 400px;
+                height: 400px;
+                opacity: 0;
+            }
+        }
+
+        /* Title styling - gunakan Baloo 2 (playful) */
+        .hero-title {
+            font-family: "Baloo 2", "Quicksand", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            font-size: 2.6rem;           /* diperkecil agar muat satu baris */
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+            text-shadow: 0 6px 20px rgba(2,8,22,0.35);
+            animation: fadeInDown 1s ease-out 0.3s both;
+            letter-spacing: 0.6px;
+            line-height: 1;
+            max-width: calc(100% - 40px);
+            display: inline-block;
+            white-space: nowrap;        /* paksa satu baris */
+            overflow: hidden;
+            text-overflow: ellipsis;   /* potong dengan elipsis jika terlalu panjang */
+        }
+
+        /* Subtitle styling - gunakan Quicksand (rounded, friendly) */
+        .hero-subtitle {
+            font-family: "Quicksand", "Baloo 2", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            font-size: 1.35em;
+            font-weight: 400;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.95);
+            animation: fadeInDown 1s ease-out 0.5s both;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+            font-weight: 500;
+            letter-spacing: .6px;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 1.8rem; white-space: normal; } /* allow wrap on very small screens */
+            .hero-subtitle { font-size: 1.05em; }
+        }
+
+        .scroll-hint {
+            margin-top: 50px;
+            font-size: 1.2em;
+            color: white;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.9;
+        }
+
+        body.light .scroll-hint { color: var(--text-light); }
+
+        .scroll-arrow {
+            font-size: 2em;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-15px);
+            }
+            60% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* Features Section - Mini Preview */
+        .features-preview {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            animation: fadeIn 2s ease-out;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--feature-bg-dark);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 0.9em;
+            transition: background .25s ease, color .25s ease;
+        }
+
+        body.light .feature-item {
+            background: var(--feature-bg-light);
+            color: var(--text-light);
+        }
+
+        .feature-icon {
+            font-size: 1.5em;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Developer credit under landing */
+        .developer {
+            margin-top: 22px;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            transition: color .25s ease;
+        }
+        body.light .developer { color: rgba(0,0,0,0.6); }
+
+        /* Small fixed theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            z-index: 140;
+            background: rgba(255,255,255,0.12);
+            border: 0;
+            color: white;
+            padding: 12px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            backdrop-filter: blur(6px);
+            transition: background .18s ease, color .18s ease;
+        }
+        body.light .theme-toggle {
+            background: rgba(0,0,0,0.05);
+            color: var(--text-light);
+        }
+
+        /* START: custom start box (non-contrasting, adapts to theme) */
+        /* Dark/night variant: deep blue gradient (malam) */
+        #startLearnBtn {
+            background: linear-gradient(90deg, #021029 0%, #05263f 60%, #0b3b5a 100%);
+            color: #e6f6ff;
+            padding: 12px 22px;
+            border-radius: 12px;
+            display: inline-block;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.06);
+            /* updated soft shadow with slight colored rim */
+            box-shadow: 0 10px 30px rgba(2,6,24,0.45), 0 2px 8px rgba(59,42,86,0.12);
+            transition: transform .15s ease, box-shadow .15s ease, background .18s ease, color .18s ease;
+            font-weight: 700;
+        }
+
+        /* hover / focus */
+        #startLearnBtn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 42px rgba(2,6,24,0.52), 0 4px 12px rgba(59,42,86,0.14);
+        }
+        #startLearnBtn:focus {
+            outline: 3px solid rgba(4,66,102,0.22);
+            outline-offset: 4px;
+        }
+
+        /* Light/day variant: light blue → soft lilac gradient (siang), not white */
+        body.light #startLearnBtn {
+            background: linear-gradient(90deg, #cfeeff 0%, #d8d1ff 60%, #f0e6ff 100%);
+            color: #07263a; /* readable dark-blue text */
+            border: 1px solid rgba(7,38,58,0.08);
+            box-shadow: 0 10px 28px rgba(7,38,58,0.10), 0 2px 10px rgba(138,99,255,0.06);
+        }
+        body.light #startLearnBtn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 46px rgba(7,38,58,0.14), 0 4px 14px rgba(138,99,255,0.08);
+        }
+        /* END */
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5em;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2em;
+            }
+
+            .battery-icon {
+                width: 200px;
+                height: 200px;
+            }
+
+            .battery-body {
+                width: 160px;
+                height: 200px;
+            }
+
+            .features-preview {
+                flex-direction: column;
+                gap: 10px;
+                bottom: 10px;
+            }
+
+            .feature-item {
+                font-size: 0.8em;
+                padding: 8px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2em;
+            }
+
+            .hero-subtitle {
+                font-size: 1em;
+            }
+
+            .battery-icon {
+                width: 150px;
+                height: 150px;
+            }
+
+            .battery-body {
+                width: 120px;
+                height: 150px;
+            }
+
+            .battery-terminal {
+                width: 60px;
+                height: 20px;
+            }
+        }
+
+        /* Menu overlay and buttons (kept) */
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.6);
+            z-index: 120;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .18s ease, visibility .18s;
+        }
+        .menu-overlay.active { opacity: 1; visibility: visible; }
+
+        .menu-panel {
+            width: 92%;
+            max-width: 560px;
+            background: var(--panel-bg);
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+            text-align: center;
+        }
+        .menu-panel h2 { margin-bottom: 8px; color: #2c3e50; }
+        .menu-panel p { margin-bottom: 16px; color: #555; }
+
+        .menu-btn {
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+        }
+        .menu-btn.secondary { background: #f0f0f0; color: #333; box-shadow:none; }
+        .menu-btn.disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+
+        /* Font assignment (gunakan pada elemen sesuai kegunaan) */
+        .font-title { font-family: "Poppins", "Rubik", "Baloo 2", system-ui, sans-serif; }
+        .font-sub { font-family: "Inter", "Open Sans", "Quicksand", system-ui, sans-serif; font-weight:500; }
+        .font-action { font-family: "Montserrat", "Poppins", system-ui, sans-serif; font-weight:600; }
+
+        /* contoh penggunaan cepat */
+        .hero-title { /* override sebelumnya untuk memakai rekomendasi */
+            font-family: var(--unused, "Poppins"), "Baloo 2", system-ui, sans-serif;
+            font-weight: 700;
+        }
+        .hero-subtitle { font-family: "Inter", "Open Sans", system-ui, sans-serif; font-weight: 500; }
+        #startLearnBtn, .menu-btn { font-family: "Montserrat", "Poppins", system-ui, sans-serif; font-weight: 600; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5em;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2em;
+            }
+
+            .battery-icon {
+                width: 200px;
+                height: 200px;
+            }
+
+            .battery-body {
+                width: 160px;
+                height: 200px;
+            }
+
+            .features-preview {
+                flex-direction: column;
+                gap: 10px;
+                bottom: 10px;
+            }
+
+            .feature-item {
+                font-size: 0.8em;
+                padding: 8px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2em;
+            }
+
+            .hero-subtitle {
+                font-size: 1em;
+            }
+
+            .battery-icon {
+                width: 150px;
+                height: 150px;
+            }
+
+            .battery-body {
+                width: 120px;
+                height: 150px;
+            }
+
+            .battery-terminal {
+                width: 60px;
+                height: 20px;
+            }
+        }
+
+        /* Menu overlay and buttons (kept) */
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.6);
+            z-index: 120;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .18s ease, visibility .18s;
+        }
+        .menu-overlay.active { opacity: 1; visibility: visible; }
+
+        .menu-panel {
+            width: 92%;
+            max-width: 560px;
+            background: var(--panel-bg);
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+            text-align: center;
+        }
+        .menu-panel h2 { margin-bottom: 8px; color: #2c3e50; }
+        .menu-panel p { margin-bottom: 16px; color: #555; }
+
+        .menu-btn {
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+        }
+        .menu-btn.secondary { background: #f0f0f0; color: #333; box-shadow:none; }
+        .menu-btn.disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+
+        /* ELECTRIC BACKGROUND - subtle, animated lines behind everything */
+        #electric-bg {
+          position: fixed;
+          inset: 0;
+          z-index: 0;                 /* behind main content */
+          pointer-events: none;
+          mix-blend-mode: screen;
+          opacity: 0.55;              /* overall subtlety */
+          filter: blur(8px) saturate(1.1);
+        }
+
+        /* ensure main hero sits above the electric bg */
+        .hero-section { position: relative; z-index: 2; }
+
+        .electric-line {
+          fill: none;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-dasharray: 240;
+          stroke-dashoffset: 240;
+          opacity: 0.85;
+          stroke-width: 2.2;
+          animation: dash 2.6s linear infinite, drift 12s ease-in-out infinite;
+        }
+
+        /* variations for layering */
+        .electric-line.layer-1 { stroke: rgba(160,230,255,0.18); stroke-width: 2.6; animation-duration: 2.4s, 14s; opacity:0.9; }
+        .electric-line.layer-2 { stroke: rgba(200,170,255,0.12); stroke-width: 1.8; animation-duration: 3.2s, 18s; opacity:0.7; }
+        .electric-line.layer-3 { stroke: rgba(120,210,255,0.09); stroke-width: 3.4; animation-duration: 1.9s, 10s; opacity:0.65; filter: blur(1px); }
+
+        @keyframes dash {
+          0%   { stroke-dashoffset: 240; opacity: 0; }
+          15%  { opacity: 1; }
+          60%  { stroke-dashoffset: 0; }
+          100% { stroke-dashoffset: -240; opacity: 0; }
+        }
+
+        /* slow drifting of the whole path to give spread/movement */
+        @keyframes drift {
+          0% { transform: translate3d(-6%, -2%, 0) rotate(-0.8deg) scale(1); }
+          50% { transform: translate3d(6%, 2%, 0) rotate(0.8deg) scale(1.02); }
+          100% { transform: translate3d(-6%, -2%, 0) rotate(-0.8deg) scale(1); }
+        }
+
+        /* darker / lighter theme adjustments */
+        body.light #electric-bg { opacity: 0.45; filter: blur(6px) saturate(0.95); }
+        body.light .electric-line.layer-1 { stroke: rgba(140,120,255,0.20); }
+        body.light .electric-line.layer-2 { stroke: rgba(200,160,255,0.14); }
+        body.light .electric-line.layer-3 { stroke: rgba(160,200,255,0.10); }
+
+        /* make sure overlay/menu still on top */
+        .menu-overlay { z-index: 120; }
+    </style>
+</head>
+<body>
+    <!-- theme toggle -->
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+
+    <!-- Insert electric background SVG (spread across screen) -->
+    <div id="electric-bg" aria-hidden="true">
+      <svg viewBox="0 0 1400 800" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <!-- Three layered sweeping electric strokes across background -->
+        <path class="electric-line layer-1" d="M -100 220 C 120 120, 300 40, 520 120 S 820 260, 1040 200 S 1320 120, 1500 180" />
+        <path class="electric-line layer-2" d="M -80 420 C 140 380, 360 320, 540 420 S 820 540, 1040 480 S 1280 400, 1500 460" />
+        <path class="electric-line layer-3" d="M -120 120 C 80 40, 240 80, 420 160 S 720 320, 980 240 S 1240 160, 1500 200" />
+      </svg>
+    </div>
+
+    <!-- LANDING PAGE / HERO SECTION -->
+    <section class="hero-section">
+        <!-- Animated particles background -->
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 1.5s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 3.5s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 2.5s;"></div>
+
+        <!-- 3D Battery Icon with Energy Waves -->
+        <div class="battery-icon">
+            <div class="energy-wave"></div>
+            <div class="energy-wave"></div>
+            <div class="energy-wave"></div>
+            <div class="battery-body">
+                <div class="battery-terminal"></div>
+                <div class="battery-level"></div>
+                <div class="battery-shine"></div>
+            </div>
+        </div>
+
+        <!-- Main Title -->
+        <h1 class="hero-title">Menjelajahi Sel Galvani Secara Interaktif</h1>
+        
+        <!-- Subtitle -->
+        <p class="hero-subtitle">⚡Pembelajaran Elektrokimia yang Menarik dan Edukatif⚡</p>
+        
+        <!-- Features Preview replaced by single start button -->
+        <div id="startLearnContainer" style="margin-top:8px;">
+            <a href="#" id="startLearnBtn" class="menu-btn" style="width:auto; padding:12px 20px; font-size:1.1rem;">Mulai Belajar</a>
+        </div>
+
+        <!-- Developer credit -->
+        <div class="developer">Jasmine Hobiro Amalia 2025 © </div>
+    </section>
+
+    <!-- menu overlay with anchors (can be opened via JS or left hidden) -->
+    <div id="menuOverlay" class="menu-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="menu-panel" aria-labelledby="menuTitle">
+            <h2 id="menuTitle">Mulai Pembelajaran</h2>
+            <p>Pilih bagian yang ingin dipelajari. (Tombol Kuis akan dicek statusnya.)</p>
+
+            <!-- anchors (href) agar bisa diklik langsung -->
+            <a class="menu-btn" id="linkTentang" href="tentang sel volta.html">📚 Tentang Sel Volta</a>
+            <a class="menu-btn" id="linkKerangka" href="kerangka.html">🔬 Kerangka Sel Volta</a>
+            <a class="menu-btn" id="linkEksperimen" href="eksperimen..html">⚡ Eksperimen</a>
+            <a class="menu-btn" id="linkKuis" href="kuis.html">🧠 Kuis Interaktif</a>
+
+            <div style="margin-top:12px;">
+                <button class="menu-btn secondary" onclick="closeMenu()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // THEME TOGGLE
+        (function(){
+            const KEY = 'vv-theme';
+            const toggle = document.getElementById('themeToggle');
+            const saved = localStorage.getItem(KEY) || 'dark';
+            function applyTheme(theme){
+                if(theme === 'light') {
+                    document.body.classList.add('light');
+                    toggle.textContent = '☀️';
+                    toggle.setAttribute('aria-label','Switch to dark mode');
+                } else {
+                    document.body.classList.remove('light');
+                    toggle.textContent = '🌙';
+                    toggle.setAttribute('aria-label','Switch to light mode');
+                }
+                localStorage.setItem(KEY, theme);
+            }
+            applyTheme(saved);
+            toggle.addEventListener('click', function(){
+                const isLight = document.body.classList.contains('light');
+                applyTheme(isLight ? 'dark' : 'light');
+            });
+        })();
+
+        // Menu overlay controls (overlay not automatically shown)
+        function closeMenu(){
+            const overlay = document.getElementById('menuOverlay');
+            overlay.classList.remove('active');
+            overlay.setAttribute('aria-hidden','true');
+        }
+        // prevent direct access to kuis if not unlocked
+        document.addEventListener('DOMContentLoaded', function(){
+            const KEY = 'vv-kuis-unlocked';
+            const linkKuis = document.getElementById('linkKuis');
+            if(linkKuis){
+                linkKuis.addEventListener('click', function(e){
+                    if(localStorage.getItem(KEY) !== '1'){
+                        e.preventDefault();
+                        alert('Kuis terkunci. Selesaikan eksperimen terlebih dahulu untuk membuka kuis.');
+                    }
+                });
+            }
+            // allow closing overlay by click outside
+            const overlay = document.getElementById('menuOverlay');
+            if(overlay){
+                overlay.addEventListener('click', function(e){
+                    if(e.target === overlay) closeMenu();
+                });
+                document.addEventListener('keydown', function(e){
+                    if(e.key === 'Escape' && overlay.classList.contains('active')) closeMenu();
+                });
+            }
+        });
+
+        // preserve existing particle placement & subtle interactions
+        (function placeParticles() {
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((p, i) => {
+                const startLeft = 5 + i * 10 + Math.random() * 6;
+                p.style.left = `${startLeft}%`;
+                p.style.animationDuration = `${12 + Math.round(Math.random()*8)}s`;
+                p.style.animationDelay = `${Math.round(Math.random()*4)}s`;
+            });
+        })();
+
+        // subtle motion effects
+        document.addEventListener('mousemove', function(e) {
+            const particles = document.querySelectorAll('.particle');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            particles.forEach((particle, index) => {
+                const strengthX = (index % 2 === 0) ? 20 : -20;
+                const strengthY = 10;
+                const offsetX = (x - 0.5) * strengthX;
+                const offsetY = (y - 0.5) * strengthY;
+                particle.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            });
+
+            const battery = document.querySelector('.battery-body');
+            if (battery) {
+                const rotX = (y - 0.5) * 6;
+                const rotY = (x - 0.5) * -8;
+                battery.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+            }
+        });
+
+        // touch-friendly slight motion for mobile
+        document.addEventListener('touchmove', function(e) {
+            const touch = e.touches[0];
+            if (!touch) return;
+            const particles = document.querySelectorAll('.particle');
+            const x = touch.clientX / window.innerWidth;
+            const y = touch.clientY / window.innerHeight;
+            particles.forEach((particle, index) => {
+                const strengthX = (index % 2 === 0) ? 12 : -12;
+                const strengthY = 6;
+                const offsetX = (x - 0.5) * strengthX;
+                const offsetY = (y - 0.5) * strengthY;
+                particle.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            });
+        });
+
+        // open overlay from visible "Mulai Belajar" button
+        (function(){
+            const startBtn = document.getElementById('startLearnBtn');
+            if(startBtn){
+                startBtn.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const overlay = document.getElementById('menuOverlay');
+                    if(!overlay) return;
+                    overlay.classList.add('active');
+                    overlay.setAttribute('aria-hidden','false');
+
+                    // update kuis link state
+                    const KEY = 'vv-kuis-unlocked';
+                    const linkKuis = document.getElementById('linkKuis');
+                    if(linkKuis){
+                        if(localStorage.getItem(KEY) !== '1') linkKuis.classList.add('disabled');
+                        else linkKuis.classList.remove('disabled');
+                    }
+                });
+            }
+        })();
+
+        // filepath: c:\Users\HP ELITEBOOK X360\OneDrive\Documents\TUGAS S2\PENGEMBANGAN Coding & AI\PROJECT UTS\Index.html
+        (function(){
+            const body = document;
+            const battery = document.querySelector('.battery-body');
+            if(!battery) return;
+            // add pulse class periodically to enhance activity (keeps subtle)
+            setInterval(() => {
+                battery.classList.add('pulse');
+                setTimeout(()=> battery.classList.remove('pulse'), 700);
+            }, 2600);
+        })();
+
+        /* small enhancement: slightly randomize animation-phase to avoid sync */
+        (function randomizeElectricTiming() {
+          const lines = document.querySelectorAll('#electric-bg .electric-line');
+          lines.forEach((ln, i) => {
+            const dashDelay = (Math.random() * 0.9) + 's';
+            const driftDelay = (Math.random() * 3) + 's';
+            ln.style.animationDelay = `${dashDelay}, ${driftDelay}`;
+          });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerangka Sel Volta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2c3e50;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header Navigation */
+        .header-nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+            color: #764ba2;
+        }
+
+        .page-title-header {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease-out 0.2s both;
+        }
+
+        .scroll-instruction {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.1em;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out 0.3s both;
+        }
+
+        .scroll-instruction span {
+            display: inline-block;
+            animation: slideRight 2s infinite;
+            margin: 0 5px;
+        }
+
+        @keyframes slideRight {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Content Grid - Vertical layout (replace horizontal scroll) */
+        .content-grid {
+            display: flex;
+            flex-direction: column;    /* susun vertikal ke bawah */
+            gap: 30px;
+            margin-bottom: 40px;
+            /* nonaktifkan horizontal scroll */
+            overflow: visible;
+            scroll-snap-type: none;
+            padding-bottom: 0;
+        }
+
+        /* remove custom horizontal scrollbar rules (page will scroll normally) */
+ 
+         /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease-out;
+            width: 100%;
+            max-width: 980px;      /* batasi agar tidak terlalu lebar di desktop */
+            margin: 0 auto;        /* pusatkan */
+        }
+ 
+        .card:hover {
+             transform: translateY(-8px);
+             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+         }
+ 
+         @keyframes fadeInUp {
+             from {
+                 opacity: 0;
+                 transform: translateY(30px);
+             }
+             to {
+                 opacity: 1;
+                 transform: translateY(0);
+             }
+         }
+
+        .card h3 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-icon {
+            font-size: 1.2em;
+        }
+
+        .card p {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .card ul {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .card li {
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
+
+        /* Component Box */
+        .component-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .component-box:hover {
+            background: #e8f4f8;
+            transform: translateX(5px);
+        }
+
+        .component-box h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.2em;
+        }
+
+        /* Diagram Container */
+        .diagram-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+
+        .diagram-title {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* SVG Diagram Styles */
+        .electrode-label {
+            font-weight: 600;
+            fill: #2c3e50;
+        }
+
+        .solution-label {
+            fill: #555;
+            font-size: 14px;
+        }
+
+        /* Fakta Menarik */
+        .fact-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+
+        .fact-item:hover {
+            transform: translateX(8px);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .fact-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .fact-item:hover .fact-icon {
+            animation: bounce 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Button */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Navigation Button */
+        .nav-button-container {
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .nav-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 18px 45px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2em;
+            }
+
+            .section-subtitle {
+                font-size: 1.1em;
+            }
+
+            .card {
+                min-width: 320px;
+                max-width: 320px;
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <nav class="header-nav">
+        <div class="header-content">
+            <a href="index.html" class="back-link">
+                <span>←</span>
+                <span>Kembali ke Beranda</span>
+            </a>
+            <h2 class="page-title-header">Kerangka Sel Volta</h2>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Section Title -->
+        <h1 class="section-title">Kerangka Sel Volta</h1>
+        <p class="section-subtitle">Struktur, Komponen, dan Prinsip Kerja Sel Elektrokimia</p>
+        <p class="scroll-instruction">
+        </p>
+
+        <!-- Content Grid - Vertical layout (replace horizontal scroll) -->
+        <div class="content-grid">
+          
+            <!-- Card 2: Diagram Sel Volta -->
+            <div class="card" style="min-width: 650px; max-width: 650px;">
+                <h3>
+                    <span class="card-icon">🔬</span>
+                    Susunan Sel Volta
+                </h3>
+                
+                <div class="diagram-container">
+                    <div class="diagram-title">Diagram Lengkap Sel Volta (Zn-Cu)</div>
+                    
+                    <svg width="100%" height="350" viewBox="0 0 600 350" preserveAspectRatio="xMidYMid meet">
+                        <!-- Voltmeter -->
+                        <rect x="240" y="10" width="120" height="60" fill="#f1c40f" stroke="#34495e" stroke-width="3" rx="8"/>
+                        <text x="300" y="30" text-anchor="middle" class="electrode-label" font-size="12">Voltmeter</text>
+                        <circle cx="270" cy="45" r="8" fill="#34495e"/>
+                        <circle cx="330" cy="45" r="8" fill="#e74c3c"/>
+                        <text x="300" y="52" text-anchor="middle" font-size="16" fill="#34495e">1.10V</text>
+
+                        <!-- Wire kiri -->
+                        <line x1="100" y1="90" x2="100" y2="80" stroke="#34495e" stroke-width="4"/>
+                        <line x1="100" y1="80" x2="270" y2="80" stroke="#34495e" stroke-width="4"/>
+                        <line x1="270" y1="80" x2="270" y2="70" stroke="#34495e" stroke-width="4"/>
+                        
+                        <!-- Wire kanan -->
+                        <line x1="500" y1="90" x2="500" y2="80" stroke="#e74c3c" stroke-width="4"/>
+                        <line x1="500" y1="80" x2="330" y2="80" stroke="#e74c3c" stroke-width="4"/>
+                        <line x1="330" y1="80" x2="330" y2="70" stroke="#e74c3c" stroke-width="4"/>
+
+                        <!-- Electron flow animation -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                                <polygon points="0 0, 10 5, 0 10" fill="#f39c12"/>
+                            </marker>
+                        </defs>
+                        
+                        <!-- Animated electrons: Anoda → up → Voltmeter → down → Katoda -->
+                        <!-- Path: Start at (100,90), go up to (100,80), right to (270,80), down to (270,45), right through voltmeter to (330,45), down to (330,80), right to (500,80), down to (500,90) -->
+                        
+                        <!-- Electron 1 -->
+                        <circle cx="100" cy="90" r="5" fill="#f39c12">
+                            <animate attributeName="cx" values="100;100;135;170;205;240;270;270;270;270;285;300;315;330;330;330;365;400;435;470;500;500" dur="4s" repeatCount="indefinite"/>
+                            <animate attributeName="cy" values="90;80;80;80;80;80;80;75;60;45;45;45;45;45;60;80;80;80;80;80;80;90" dur="4s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="100" y="105" text-anchor="middle" font-size="10" fill="#f39c12" font-weight="bold">
+                            e⁻
+                            <animate attributeName="x" values="100;100;135;170;205;240;270;270;270;270;285;300;315;330;330;330;365;400;435;470;500;500" dur="4s" repeatCount="indefinite"/>
+                            <animate attributeName="y" values="105;95;95;95;95;95;95;90;75;60;60;60;60;60;95;95;95;95;95;95;95;105" dur="4s" repeatCount="indefinite"/>
+                        </text>
+                        
+                        <!-- Electron 2 (delayed 1.3s) -->
+                        <circle cx="100" cy="90" r="5" fill="#f39c12">
+                            <animate attributeName="cx" values="100;100;135;170;205;240;270;270;270;270;285;300;315;330;330;330;365;400;435;470;500;500" dur="4s" begin="1.3s" repeatCount="indefinite"/>
+                            <animate attributeName="cy" values="90;80;80;80;80;80;80;75;60;45;45;45;45;45;60;80;80;80;80;80;80;90" dur="4s" begin="1.3s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="100" y="105" text-anchor="middle" font-size="10" fill="#f39c12" font-weight="bold">
+                            e⁻
+                            <animate attributeName="x" values="100;100;135;170;205;240;270;270;270;270;285;300;315;330;330;330;365;400;435;470;500;500" dur="4s" begin="1.3s" repeatCount="indefinite"/>
+                            <animate attributeName="y" values="105;95;95;95;95;95;95;90;75;60;60;60;60;60;95;95;95;95;95;95;95;105" dur="4s" begin="1.3s" repeatCount="indefinite"/>
+                        </text>
+                        
+                        <!-- Electron 3 (delayed 2.6s) -->
+                        <circle cx="100" cy="90" r="5" fill="#f39c12">
+                            <animate attributeName="cx" values="100;100;135;170;205;240;270;270;270;270;285;300;315;330;330;330;365;400;435;470;500;500" dur="4s" begin="2.6s" repeatCount="indefinite"/>
+                            <animate attributeName="cy" values="90;80;80;80;80;80;80;75;60;45;45;45;45;45;60;80;80;80;80;80;80;90" dur="4s" begin="2.6s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="100" y="105" text-anchor="middle" font-size="10" fill="#f39c12" font-weight="bold">
+                            e⁻
+                            <animate attributeName="x" values="100;100;135;170;205;240;270;270;270;270;285;300;315;330;330;330;365;400;435;470;500;500" dur="4s" begin="2.6s" repeatCount="indefinite"/>
+                            <animate attributeName="y" values="105;95;95;95;95;95;95;90;75;60;60;60;60;60;95;95;95;95;95;95;95;105" dur="4s" begin="2.6s" repeatCount="indefinite"/>
+                        </text>
+                        
+                        <!-- Arrow guides (static, faded) -->
+                        <line x1="130" y1="80" x2="250" y2="80" stroke="#f39c12" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5" opacity="0.2"/>
+                        <line x1="350" y1="80" x2="490" y2="80" stroke="#f39c12" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5" opacity="0.2"/>
+
+                        <!-- Beaker kiri (Anoda) -->
+                        <rect x="30" y="100" width="140" height="200" fill="#d6eaf8" stroke="#34495e" stroke-width="3" rx="8"/>
+                        <rect x="40" y="250" width="120" height="50" fill="#a9cce3" opacity="0.7"/>
+                        <text x="100" y="320" text-anchor="middle" class="solution-label">ZnSO₄</text>
+                        
+                        <!-- Elektroda Zn -->
+                        <rect x="90" y="90" width="20" height="180" fill="#95a5a6" stroke="#34495e" stroke-width="2" rx="3"/>
+                        <text x="100" y="110" text-anchor="middle" class="electrode-label" font-size="13">Zn</text>
+                        <text x="20" y="150" font-size="12" fill="#e74c3c" font-weight="bold">(-)</text>
+                        <text x="20" y="170" font-size="11" fill="#555">Anoda</text>
+                        
+                        <!-- Zn ions -->
+                        <text x="55" y="220" font-size="18" fill="#555">Zn²⁺</text>
+                        <circle cx="130" cy="200" r="3" fill="#f39c12"/>
+                        <text x="135" y="203" font-size="10" fill="#f39c12">e⁻</text>
+
+                        <!-- Beaker kanan (Katoda) -->
+                        <rect x="430" y="100" width="140" height="200" fill="#d4e6f1" stroke="#34495e" stroke-width="3" rx="8"/>
+                        <rect x="440" y="250" width="120" height="50" fill="#6495ed" opacity="0.7"/>
+                        <text x="500" y="320" text-anchor="middle" class="solution-label">CuSO₄</text>
+                        
+                        <!-- Elektroda Cu -->
+                        <rect x="490" y="90" width="20" height="180" fill="#e67e22" stroke="#34495e" stroke-width="2" rx="3"/>
+                        <text x="500" y="110" text-anchor="middle" class="electrode-label" font-size="13">Cu</text>
+                        <text x="575" y="150" font-size="12" fill="#27ae60" font-weight="bold">(+)</text>
+                        <text x="570" y="170" font-size="11" fill="#555">Katoda</text>
+                        
+                        <!-- Cu ions -->
+                        <text x="455" y="220" font-size="18" fill="#555">Cu²⁺</text>
+                        <circle cx="470" cy="200" r="3" fill="#f39c12"/>
+                        <text x="475" y="203" font-size="10" fill="#f39c12">e⁻</text>
+
+                        <!-- Jembatan Garam -->
+                        <path d="M 170 200 Q 300 170, 430 200" fill="none" stroke="#3498db" stroke-width="18" stroke-linecap="round"/>
+                        <text x="300" y="165" text-anchor="middle" font-size="13" fill="#2c3e50" font-weight="600">Jembatan Garam (Na₂SO₄)</text>
+                        
+                        <!-- Ion movement in salt bridge -->
+                        <text x="240" y="195" font-size="12" fill="white">Na⁺ →</text>
+                        <text x="340" y="195" font-size="12" fill="white">← SO₄²⁻</text>
+                    </svg>
+                </div>
+
+                <div style="background: #e8f5e9; padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 4px solid #4caf50;">
+                    <p><strong>📌 Penjelasan:</strong></p>
+                    <p style="margin-top: 8px;">• Elektron mengalir dari anoda (Zn) ke katoda (Cu) melalui kawat eksternal</p>
+                    <p>• Voltmeter mengukur potensial listrik yang dihasilkan (1,10 V)</p>
+                    <p>• Jembatan garam menjaga keseimbangan muatan dengan aliran ion</p>
+                </div>
+            </div>
+            
+  <!-- Card 1: Komponen Utama -->
+            <div class="card">
+                <h3>
+                    <span class="card-icon">🧩</span>
+                    Komponen Utama Sel Volta
+                </h3>
+                <p>Sel volta tersusun dari beberapa komponen penting yang bekerja bersama untuk menghasilkan listrik:</p>
+                
+                <div class="component-box">
+                    <h4>⚫ 1. Anoda (Elektroda Negatif)</h4>
+                    <p>Tempat terjadinya reaksi <strong>oksidasi</strong> (pelepasan elektron). Logam pada anoda akan teroksidasi dan melepaskan ion ke larutan.</p>
+                    <p style="font-style: italic; color: #667eea; margin-top: 8px;">Contoh: Zn → Zn²⁺ + 2e⁻</p>
+                </div>
+
+                <div class="component-box">
+                    <h4>🔴 2. Katoda (Elektroda Positif)</h4>
+                    <p>Tempat terjadinya reaksi <strong>reduksi</strong> (penerimaan elektron). Ion dalam larutan akan menerima elektron dan mengendap sebagai logam.</p>
+                    <p style="font-style: italic; color: #667eea; margin-top: 8px;">Contoh: Cu²⁺ + 2e⁻ → Cu</p>
+                </div>
+
+                <div class="component-box">
+                    <h4>💧 3. Larutan Elektrolit</h4>
+                    <p>Larutan yang mengandung ion-ion untuk menghantarkan arus listrik dalam bentuk perpindahan ion. Biasanya berupa larutan garam dari logam elektroda.</p>
+                </div>
+
+                <div class="component-box">
+                    <h4>🌉 4. Jembatan Garam</h4>
+                    <p>Menghubungkan kedua larutan dan menjaga netralitas muatan dengan mengalirkan ion. Mencegah penumpukan muatan yang dapat menghentikan reaksi.</p>
+                </div>
+
+                <div class="component-box">
+                    <h4>🔌 5. Kawat Penghantar</h4>
+                    <p>Kawat konduktor yang menghubungkan kedua elektroda di luar sel, jalur untuk aliran elektron dari anoda ke katoda sehingga rangkaian listrik tertutup.</p>
+                    <p style="font-style: italic; color: #667eea; margin-top: 8px;">Peran: saluran elektronik yang memungkinkan arus listrik eksternal.</p>
+                </div>
+
+                <div class="component-box">
+                    <h4>📐 6. Voltmeter</h4>
+                    <p>Alat ukur yang dipasang antara elektroda untuk mengukur beda potensial (tegangan) yang dihasilkan oleh sel volta. Biasanya dihubungkan paralel ke elektroda.</p>
+                    <p style="font-style: italic; color: #667eea; margin-top: 8px;">Catatan: voltmeter ideal memiliki resistansi tinggi agar tidak mengganggu arus sel.</p>
+                </div>
+            </div>
+
+            <!-- Card 3: Prinsip Kerja -->
+            <div class="card">
+                <h3>
+                    <span class="card-icon">⚙️</span>
+                    Prinsip Kerja Sel Volta
+                </h3>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 15px;">
+                    <h4 style="color: #667eea; margin-bottom: 15px;">Langkah-langkah Reaksi:</h4>
+                    
+                    <div style="display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px;">
+                        <div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">1</div>
+                        <div>
+                            <strong style="color: #e74c3c;">Oksidasi di Anoda</strong>
+                            <p>Logam Zn melepaskan elektron dan berubah menjadi ion Zn²⁺ yang larut dalam elektrolit.</p>
+                            <p style="font-family: monospace; color: #667eea; margin-top: 5px;">Zn(s) → Zn²⁺(aq) + 2e⁻</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px;">
+                        <div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">2</div>
+                        <div>
+                            <strong style="color: #f39c12;">Aliran Elektron</strong>
+                            <p>Elektron mengalir dari anoda ke katoda melalui kawat konduktor eksternal, menghasilkan arus listrik.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px;">
+                        <div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">3</div>
+                        <div>
+                            <strong style="color: #27ae60;">Reduksi di Katoda</strong>
+                            <p>Ion Cu²⁺ dalam larutan menerima elektron dan mengendap sebagai logam Cu pada elektroda.</p>
+                            <p style="font-family: monospace; color: #667eea; margin-top: 5px;">Cu²⁺(aq) + 2e⁻ → Cu(s)</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: flex-start; gap: 15px;">
+                        <div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">4</div>
+                        <div>
+                            <strong style="color: #3498db;">Jembatan Garam</strong>
+                            <p>Ion Na⁺ bergerak ke katoda dan SO₄²⁻ ke anoda untuk menetralkan muatan, menjaga agar reaksi terus berlangsung.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #fff3cd; padding: 15px; border-radius: 10px; border-left: 4px solid #ffc107;">
+                    <strong>💡 Kesimpulan:</strong>
+                    <p style="margin-top: 8px;">Reaksi redoks spontan menghasilkan aliran elektron yang dapat dimanfaatkan sebagai sumber energi listrik. Proses ini terus berlangsung selama masih ada reaktan yang dapat bereaksi.</p>
+                </div>
+            </div>
+
+            <!-- Card 4: Tantangan (menggantikan Fakta Menarik) -->
+            <div class="card">
+                <h3>
+                    <span class="card-icon">🧠</span>
+                    Tantangan
+                </h3>
+                <p>Rani membuat sel Volta dari logam Zn dan Cu yang dicelupkan ke larutan masing-masing sulfatnya. Setelah dihubungkan dengan kabel, lampu kecil menyala. Mengapa elektron mengalir dari logam Zn ke logam Cu sehingga lampu dapat menyala?</p>
+
+                <div style="display:flex; gap:12px; align-items:flex-start; margin-top:12px; flex-wrap:wrap;">
+                    <textarea id="challengeAnswer" placeholder="Tuliskan jawaban Anda di sini..." style="flex:1; min-height:90px; padding:12px; border-radius:10px; border:1px solid #e6e9ef; font-size:0.98rem;"></textarea>
+                    <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+                        <button class="btn" onclick="submitChallenge()">Submit Jawaban ✅</button>
+                        <button class="btn" style="background:#f3f4f6; color:#334155; box-shadow:none;" onclick="document.getElementById('challengeAnswer').value=''"></button>
+                    </div>
+                </div>
+
+                <div id="challengeResult" style="margin-top:14px; color:#334155; font-weight:600;"></div>
+            </div>
+        </div>
+
+        <!-- Navigation to Next Section -->
+        <div class="nav-button-container">
+            <a href="eksperimen.html" class="nav-button">
+                Lanjut ke Eksperimen →
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Add entrance animation on page load
+        window.addEventListener('load', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.08}s`;
+            });
+        });
+
+        // no horizontal drag behavior — page scrolls vertically by default
+
+        // Challenge submit handler
+        function submitChallenge(){
+            const el = document.getElementById('challengeAnswer');
+            const out = document.getElementById('challengeResult');
+            if(!el || !out) return;
+            const val = el.value.trim();
+            if(!val){
+                out.textContent = 'Silakan isi jawaban terlebih dahulu.';
+                out.style.color = '#d97706';
+                return;
+            }
+            // feedback sederhana (tidak mengirim ke server)
+            out.textContent = 'Jawaban diterima — terima kasih! ✨';
+            out.style.color = '#16a34a';
+            // optionally clear after a short delay
+            setTimeout(()=> { el.value = ''; }, 900);
+        }
+    </script>
+</body>
+</html>
